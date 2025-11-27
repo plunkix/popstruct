@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-popstruct}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-popstruct_password}
+      POSTGRES_DB: ${POSTGRES_DB:-popstruct}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U popstruct"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./backend:/app
+      - backend_static:/app/static
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-popstruct}:${POSTGRES_PASSWORD:-popstruct_password}@db:5432/${POSTGRES_DB:-popstruct}
+      - REDIS_URL=redis://redis:6379/0
+
+  celery_worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: celery -A app.worker.celery worker --loglevel=info
+    volumes:
+      - ./backend:/app
+      - backend_static:/app/static
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - db
+      - backend
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-popstruct}:${POSTGRES_PASSWORD:-popstruct_password}@db:5432/${POSTGRES_DB:-popstruct}
+      - REDIS_URL=redis://redis:6379/0
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    command: npm run dev
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - backend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+
+volumes:
+  postgres_data:
+  backend_static:
