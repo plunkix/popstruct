@@ -146,4 +146,16 @@ export const analysisAPI = {
     }),
 };
 
+// Results
+export const resultsAPI = {
+  listByJob: (jobId: number) => api.get(`/api/v1/jobs/${jobId}/results`),
+
+  get: (id: number) => api.get(`/api/v1/results/${id}`),
+
+  download: (id: number) =>
+    api.get(`/api/v1/results/${id}/download`, {
+      responseType: 'blob',
+    }),
+};
+
 export default api;
