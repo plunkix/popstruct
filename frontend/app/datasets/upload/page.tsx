@@ -110,6 +110,34 @@ export default function UploadDatasetPage() {
             </p>
           </div>
 
+          <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <h3 className="font-semibold text-blue-900 dark:text-blue-300 mb-2">
+              Accepted File Formats
+            </h3>
+            <div className="space-y-2 text-sm text-blue-800 dark:text-blue-400">
+              <div>
+                <strong>VCF Format:</strong> Standard Variant Call Format files with genotype data (GT field)
+                <a
+                  href="/samples/sample.vcf"
+                  download
+                  className="ml-2 text-blue-600 dark:text-blue-400 underline hover:text-blue-700"
+                >
+                  Download sample VCF
+                </a>
+              </div>
+              <div>
+                <strong>CSV Format:</strong> Comma-separated file with sample IDs and SNP genotypes (0/1/2 encoding)
+                <a
+                  href="/samples/sample.csv"
+                  download
+                  className="ml-2 text-blue-600 dark:text-blue-400 underline hover:text-blue-700"
+                >
+                  Download sample CSV
+                </a>
+              </div>
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-400 text-red-700 dark:text-red-400 px-4 py-3 rounded">

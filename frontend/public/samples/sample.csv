@@ -1,0 +1,11 @@
+sample_id,snp_1,snp_2,snp_3,snp_4,snp_5,snp_6,snp_7,snp_8,snp_9,snp_10,population
+Sample1,0,0,1,1,0,2,0,0,1,1,EUR
+Sample2,1,0,0,2,1,1,1,0,0,2,EUR
+Sample3,2,1,1,1,0,2,0,1,2,1,AFR
+Sample4,0,0,2,1,2,1,1,0,1,0,AFR
+Sample5,1,2,0,0,1,1,2,1,0,2,EAS
+Sample6,0,0,1,2,1,2,0,1,1,1,EAS
+Sample7,1,1,0,1,0,1,1,0,0,1,EUR
+Sample8,2,0,2,0,1,2,0,2,1,2,AFR
+Sample9,0,2,1,1,2,0,1,1,2,0,EAS
+Sample10,1,0,0,2,0,2,1,0,1,1,EUR
