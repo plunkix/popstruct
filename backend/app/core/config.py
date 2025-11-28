@@ -22,10 +22,10 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
     # CORS
-    ALLOWED_ORIGINS: Union[str, List[str]] = [
-        "http://localhost:3000",
-        "http://localhost:3001",
-    ]
+    ALLOWED_ORIGINS: Union[str, List[str]] = os.getenv(
+        "ALLOWED_ORIGINS",
+        "http://localhost:3000,http://localhost:3001"
+    )
 
     @field_validator('ALLOWED_ORIGINS', mode='before')
     @classmethod
