@@ -34,8 +34,9 @@ export default function JobDetailsPage() {
       return response.data;
     },
     enabled: !!user && !!jobId,
-    refetchInterval: (data) => {
-      return data?.status === 'pending' || data?.status === 'running' ? 3000 : false;
+    refetchInterval: (query) => {
+      const jobData = query.state.data;
+      return jobData?.status === 'pending' || jobData?.status === 'running' ? 3000 : false;
     },
   });
 
