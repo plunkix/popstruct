@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from app.core.dependencies import get_db, get_current_active_user
@@ -13,8 +13,12 @@ from app.worker.tasks import (
     run_kinship_analysis,
     run_full_analysis
 )
+import os
 
 router = APIRouter()
+
+# Check if we should run jobs synchronously (for free tiers without workers)
+RUN_JOBS_SYNC = os.getenv("RUN_JOBS_SYNC", "false").lower() == "true"
 
 
 def check_daily_job_limit(user: User, db: Session) -> None:
@@ -45,6 +49,7 @@ def check_daily_job_limit(user: User, db: Session) -> None:
 @router.post("/pca", response_model=JobResponse, status_code=status.HTTP_201_CREATED)
 async def create_pca_job(
     job_data: JobCreate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
@@ -80,10 +85,15 @@ async def create_pca_job(
     db.commit()
     db.refresh(job)
 
-    # Start Celery task
-    task = run_pca_analysis.delay(job.id)
-    job.celery_task_id = task.id
-    db.commit()
+    # Run job synchronously or with Celery
+    if RUN_JOBS_SYNC:
+        # Run in background thread (no Celery worker needed)
+        background_tasks.add_task(run_pca_analysis, job.id)
+    else:
+        # Start Celery task
+        task = run_pca_analysis.delay(job.id)
+        job.celery_task_id = task.id
+        db.commit()
 
     return job
 
@@ -91,6 +101,7 @@ async def create_pca_job(
 @router.post("/clustering", response_model=JobResponse, status_code=status.HTTP_201_CREATED)
 async def create_clustering_job(
     job_data: JobCreate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
@@ -123,9 +134,12 @@ async def create_clustering_job(
     db.commit()
     db.refresh(job)
 
-    task = run_clustering_analysis.delay(job.id)
-    job.celery_task_id = task.id
-    db.commit()
+    if RUN_JOBS_SYNC:
+        background_tasks.add_task(run_clustering_analysis, job.id)
+    else:
+        task = run_clustering_analysis.delay(job.id)
+        job.celery_task_id = task.id
+        db.commit()
 
     return job
 
@@ -133,6 +147,7 @@ async def create_clustering_job(
 @router.post("/kinship", response_model=JobResponse, status_code=status.HTTP_201_CREATED)
 async def create_kinship_job(
     job_data: JobCreate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
@@ -165,9 +180,12 @@ async def create_kinship_job(
     db.commit()
     db.refresh(job)
 
-    task = run_kinship_analysis.delay(job.id)
-    job.celery_task_id = task.id
-    db.commit()
+    if RUN_JOBS_SYNC:
+        background_tasks.add_task(run_kinship_analysis, job.id)
+    else:
+        task = run_kinship_analysis.delay(job.id)
+        job.celery_task_id = task.id
+        db.commit()
 
     return job
 
@@ -175,6 +193,7 @@ async def create_kinship_job(
 @router.post("/full", response_model=JobResponse, status_code=status.HTTP_201_CREATED)
 async def create_full_analysis_job(
     job_data: JobCreate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
@@ -207,8 +226,11 @@ async def create_full_analysis_job(
     db.commit()
     db.refresh(job)
 
-    task = run_full_analysis.delay(job.id)
-    job.celery_task_id = task.id
-    db.commit()
+    if RUN_JOBS_SYNC:
+        background_tasks.add_task(run_full_analysis, job.id)
+    else:
+        task = run_full_analysis.delay(job.id)
+        job.celery_task_id = task.id
+        db.commit()
 
     return job
