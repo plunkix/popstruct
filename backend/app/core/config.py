@@ -1,6 +1,6 @@
 from pydantic_settings import BaseSettings
-from pydantic import field_validator
-from typing import List, Union
+from pydantic import field_validator, Field
+from typing import List, Union, Any
 import os
 
 
@@ -21,8 +21,8 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
-    # CORS - can be string or list
-    ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:3001"
+    # CORS - accepts string or list, always returns list
+    ALLOWED_ORIGINS: Any = Field(default="http://localhost:3000,http://localhost:3001")
 
     @field_validator('ALLOWED_ORIGINS', mode='before')
     @classmethod
