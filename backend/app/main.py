@@ -69,6 +69,8 @@ async def startup_event():
     """Initialize database on startup."""
     init_db()
     print("Database initialized")
+    print(f"ALLOWED_ORIGINS: {settings.ALLOWED_ORIGINS}")
+    print(f"Type: {type(settings.ALLOWED_ORIGINS)}")
 
 
 @app.get("/")
