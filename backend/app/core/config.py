@@ -1,6 +1,6 @@
 from pydantic_settings import BaseSettings
-from pydantic import field_validator, Field
-from typing import List, Union, Any
+from pydantic import field_validator
+from typing import List, Union
 import os
 
 
@@ -21,26 +21,20 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
-    # CORS - accepts string or list, always returns list
-    ALLOWED_ORIGINS: Any = Field(default="http://localhost:3000,http://localhost:3001")
+    # CORS
+    ALLOWED_ORIGINS: Union[str, List[str]] = [
+        "http://localhost:3000",
+        "http://localhost:3001",
+    ]
 
     @field_validator('ALLOWED_ORIGINS', mode='before')
     @classmethod
     def parse_cors_origins(cls, v):
-        # If None or empty, use default
-        if v is None or v == "":
-            return ["http://localhost:3000", "http://localhost:3001"]
-
-        # If already a list, return as-is
-        if isinstance(v, list):
-            return v
-
-        # If string, parse it
         if isinstance(v, str):
+            # Handle single string or comma-separated
             if v == "*":
                 return ["*"]
-            return [origin.strip() for origin in v.split(",") if origin.strip()]
-
+            return [origin.strip() for origin in v.split(",")]
         return v
 
     # Redis and Celery

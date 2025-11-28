@@ -18,10 +18,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["*"],
-    max_age=3600,
 )
 
 
@@ -69,8 +67,6 @@ async def startup_event():
     """Initialize database on startup."""
     init_db()
     print("Database initialized")
-    print(f"ALLOWED_ORIGINS: {settings.ALLOWED_ORIGINS}")
-    print(f"Type: {type(settings.ALLOWED_ORIGINS)}")
 
 
 @app.get("/")
