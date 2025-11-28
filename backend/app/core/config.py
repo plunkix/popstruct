@@ -21,22 +21,26 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
-    # CORS
-    ALLOWED_ORIGINS: List[str] = []
+    # CORS - can be string or list
+    ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:3001"
 
     @field_validator('ALLOWED_ORIGINS', mode='before')
     @classmethod
     def parse_cors_origins(cls, v):
-        # If nothing provided, use default localhost
-        if not v or v == []:
-            env_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:3001")
-            v = env_origins
+        # If None or empty, use default
+        if v is None or v == "":
+            return ["http://localhost:3000", "http://localhost:3001"]
 
+        # If already a list, return as-is
+        if isinstance(v, list):
+            return v
+
+        # If string, parse it
         if isinstance(v, str):
-            # Handle single string or comma-separated
             if v == "*":
                 return ["*"]
             return [origin.strip() for origin in v.split(",") if origin.strip()]
+
         return v
 
     # Redis and Celery
