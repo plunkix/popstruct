@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.core.dependencies import get_db
+from app.core.dependencies import get_db, get_current_active_user
 from app.core.security import (
     verify_password,
     get_password_hash,
@@ -131,6 +131,3 @@ async def get_current_user_info(
         subscription_tier=current_user.subscription_tier.value,
         created_at=current_user.created_at.isoformat()
     )
-
-
-from app.core.dependencies import get_current_active_user
