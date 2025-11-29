@@ -5,14 +5,15 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { getUser } from '@/lib/auth';
-import { datasetsAPI } from '@/lib/api';
-import { Database, Plus, FileText, Calendar, ArrowLeft } from 'lucide-react';
+import { datasetsAPI, analysisAPI } from '@/lib/api';
+import { Database, Plus, FileText, Calendar, ArrowLeft, Play } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 
 export default function DatasetsPage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [page, setPage] = useState(1);
+  const [processing, setProcessing] = useState<number | null>(null);
   const pageSize = 10;
 
   useEffect(() => {
@@ -27,7 +28,7 @@ export default function DatasetsPage() {
     fetchUser();
   }, [router]);
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['datasets', page],
     queryFn: async () => {
       const response = await datasetsAPI.list(page, pageSize);
@@ -35,6 +36,22 @@ export default function DatasetsPage() {
     },
     enabled: !!user,
   });
+
+  const handleRunAnalysis = async (datasetId: number, datasetName: string) => {
+    setProcessing(datasetId);
+    try {
+      await analysisAPI.createFullAnalysis(
+        datasetId,
+        `Full Analysis - ${datasetName}`,
+        { n_components: 10, n_clusters: 3 }
+      );
+      router.push('/jobs');
+    } catch (error: any) {
+      alert(error.response?.data?.detail || 'Failed to start analysis');
+    } finally {
+      setProcessing(null);
+    }
+  };
 
   if (!user) {
     return (
@@ -125,14 +142,31 @@ export default function DatasetsPage() {
                           <span>{formatDate(dataset.created_at)}</span>
                         </div>
                         <span>Type: {dataset.file_type.toUpperCase()}</span>
-                        {dataset.samples_count && (
-                          <span>Samples: {dataset.samples_count}</span>
+                        {dataset.n_samples && (
+                          <span>Samples: {dataset.n_samples}</span>
                         )}
-                        {dataset.variants_count && (
-                          <span>Variants: {dataset.variants_count}</span>
+                        {dataset.n_variants && (
+                          <span>Variants: {dataset.n_variants}</span>
                         )}
                       </div>
                     </div>
+                    <button
+                      onClick={() => handleRunAnalysis(dataset.id, dataset.name)}
+                      disabled={processing === dataset.id}
+                      className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {processing === dataset.id ? (
+                        <>
+                          <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                          Starting...
+                        </>
+                      ) : (
+                        <>
+                          <Play className="h-4 w-4 mr-2" />
+                          Run Analysis
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
               ))}
