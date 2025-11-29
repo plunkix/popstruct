@@ -8,6 +8,7 @@ import { getUser } from '@/lib/auth';
 import { jobsAPI, resultsAPI } from '@/lib/api';
 import { ArrowLeft, Download, FileText, Calendar, Activity } from 'lucide-react';
 import { formatDate, getStatusColor } from '@/lib/utils';
+import ResultsViewer from '@/components/ResultsViewer';
 
 export default function JobDetailsPage() {
   const router = useRouter();
@@ -234,26 +235,10 @@ export default function JobDetailsPage() {
           {/* Results Card */}
           {job.status === 'completed' && (
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                Results
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+                Analysis Results
               </h2>
-              <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white">
-                    Analysis Results Package
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Includes PCA plots, clustering results, kinship matrix, and summary statistics
-                  </p>
-                </div>
-                <button
-                  onClick={handleDownload}
-                  className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Download ZIP
-                </button>
-              </div>
+              <ResultsViewer jobId={parseInt(jobId)} onDownload={handleDownload} />
             </div>
           )}
         </div>

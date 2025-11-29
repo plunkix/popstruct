@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.database import init_db
-from app.api.v1 import auth, datasets, jobs, analysis, users
+from app.api.v1 import auth, datasets, jobs, analysis, users, results
 
 # Create FastAPI app
 app = FastAPI(
@@ -59,6 +59,12 @@ app.include_router(
     jobs.router,
     prefix=f"{settings.API_V1_STR}/jobs",
     tags=["Jobs"]
+)
+
+app.include_router(
+    results.router,
+    prefix=f"{settings.API_V1_STR}/results",
+    tags=["Results"]
 )
 
 

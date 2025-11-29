@@ -222,6 +222,12 @@ export default function DashboardPage() {
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Completed Results</h2>
+            <Link
+              href="/jobs"
+              className="text-blue-600 hover:text-blue-700 text-sm font-semibold"
+            >
+              View all jobs
+            </Link>
           </div>
 
           {jobsLoading ? (
@@ -230,35 +236,45 @@ export default function DashboardPage() {
             </div>
           ) : jobsData?.jobs?.filter((j: any) => j.status === 'completed').length === 0 ? (
             <p className="text-center text-gray-500 py-8">
-              No completed analyses yet.
+              No completed analyses yet. Upload a dataset and run analysis to see results here!
             </p>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-6">
               {jobsData?.jobs
                 ?.filter((job: any) => job.status === 'completed')
+                .slice(0, 1)
                 .map((job: any) => (
-                  <div
-                    key={job.id}
-                    className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <CheckCircle className="h-5 w-5 text-green-600" />
-                          <h3 className="font-semibold text-gray-900 dark:text-white">
+                  <div key={job.id}>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center space-x-3">
+                        <CheckCircle className="h-6 w-6 text-green-600" />
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                             {job.name}
                           </h3>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Completed {formatDate(job.completed_at)}
+                          </p>
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {job.analysis_type} • Completed {formatDate(job.completed_at)}
-                        </p>
                       </div>
+                      <Link
+                        href={`/jobs/${job.id}`}
+                        className="text-blue-600 hover:text-blue-700 text-sm font-semibold"
+                      >
+                        View Full Details →
+                      </Link>
+                    </div>
+                    {/* Import and use ResultsViewer here - we'll do this in the next step */}
+                    <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg text-center">
+                      <p className="text-gray-600 dark:text-gray-400 mb-4">
+                        Analysis completed successfully!
+                      </p>
                       <button
                         onClick={() => handleDownload(job.id)}
-                        className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                       >
-                        <Download className="h-4 w-4 mr-2" />
-                        Download
+                        <Download className="h-5 w-5 mr-2" />
+                        Download Results
                       </button>
                     </div>
                   </div>
