@@ -23,7 +23,9 @@ class JobResponse(BaseModel):
     progress_percent: int
     error_message: Optional[str]
     dataset_id: int
+    dataset_name: Optional[str] = None
     user_id: int
+    parameters: Optional[Dict[str, Any]] = None
     created_at: datetime
     started_at: Optional[datetime]
     completed_at: Optional[datetime]

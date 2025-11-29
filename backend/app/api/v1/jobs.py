@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import FileResponse
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from typing import Optional
 from app.core.dependencies import get_db, get_current_active_user
 from app.models.user import User
@@ -23,7 +23,7 @@ async def list_jobs(
     """List all jobs for current user."""
     offset = (page - 1) * page_size
 
-    query = db.query(Job).filter(Job.user_id == current_user.id)
+    query = db.query(Job).options(joinedload(Job.dataset)).filter(Job.user_id == current_user.id)
 
     if status_filter:
         query = query.filter(Job.status == JobStatus(status_filter))
@@ -32,8 +32,28 @@ async def list_jobs(
 
     total = db.query(Job).filter(Job.user_id == current_user.id).count()
 
+    # Add dataset_name to each job
+    jobs_list = []
+    for job in jobs:
+        job_dict = {
+            "id": job.id,
+            "name": job.name,
+            "analysis_type": job.analysis_type.value,
+            "status": job.status.value,
+            "progress_percent": job.progress_percent,
+            "error_message": job.error_message,
+            "dataset_id": job.dataset_id,
+            "dataset_name": job.dataset.name if job.dataset else None,
+            "user_id": job.user_id,
+            "parameters": job.parameters,
+            "created_at": job.created_at,
+            "started_at": job.started_at,
+            "completed_at": job.completed_at,
+        }
+        jobs_list.append(job_dict)
+
     return {
-        "jobs": jobs,
+        "jobs": jobs_list,
         "total": total,
         "page": page,
         "page_size": page_size
@@ -47,7 +67,7 @@ async def get_job(
     current_user: User = Depends(get_current_active_user)
 ):
     """Get a specific job."""
-    job = db.query(Job).filter(Job.id == job_id).first()
+    job = db.query(Job).options(joinedload(Job.dataset)).filter(Job.id == job_id).first()
 
     if not job:
         raise HTTPException(
@@ -61,7 +81,21 @@ async def get_job(
             detail="Not authorized to access this job"
         )
 
-    return job
+    return {
+        "id": job.id,
+        "name": job.name,
+        "analysis_type": job.analysis_type.value,
+        "status": job.status.value,
+        "progress_percent": job.progress_percent,
+        "error_message": job.error_message,
+        "dataset_id": job.dataset_id,
+        "dataset_name": job.dataset.name if job.dataset else None,
+        "user_id": job.user_id,
+        "parameters": job.parameters,
+        "created_at": job.created_at,
+        "started_at": job.started_at,
+        "completed_at": job.completed_at,
+    }
 
 
 @router.delete("/{job_id}", status_code=status.HTTP_204_NO_CONTENT)
