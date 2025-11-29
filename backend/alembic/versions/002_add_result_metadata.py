@@ -1,4 +1,4 @@
-"""add result metadata column
+"""add result summary_data column
 
 Revision ID: 002
 Revises: 001
@@ -17,10 +17,10 @@ depends_on = None
 
 
 def upgrade():
-    # Add metadata column to results table
-    op.add_column('results', sa.Column('metadata', sa.JSON(), nullable=True))
+    # Add summary_data column to results table
+    op.add_column('results', sa.Column('summary_data', sa.JSON(), nullable=True))
 
 
 def downgrade():
-    # Remove metadata column
-    op.drop_column('results', 'metadata')
+    # Remove summary_data column
+    op.drop_column('results', 'summary_data')

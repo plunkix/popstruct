@@ -61,9 +61,9 @@ async def get_results_preview(
 
     # Get metrics from Result model (stored in database)
     for result in results:
-        # Use metadata if available (preferred for ephemeral storage)
-        if result.metadata:
-            response_data["metrics"] = result.metadata
+        # Use summary_data if available (preferred for ephemeral storage)
+        if result.summary_data:
+            response_data["metrics"] = result.summary_data
 
         # Also extract from result fields
         if result.pca_variance_explained:

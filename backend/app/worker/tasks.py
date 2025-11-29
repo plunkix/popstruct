@@ -442,7 +442,7 @@ def run_full_analysis(self, job_id: int):
             kinship_matrix_path=matrix_path,
             kinship_heatmap_path=heatmap_path,
             pca_plot_path=pca_plot_path,
-            metadata=summary_data  # Store summary for preview
+            summary_data=summary_data  # Store summary for preview
         )
         db.add(result)
 

@@ -31,8 +31,8 @@ class Result(Base):
     cluster_plot_path = Column(String, nullable=True)
     kinship_heatmap_path = Column(String, nullable=True)
 
-    # Metadata (for preview without files)
-    metadata = Column(JSON, nullable=True)  # Stores n_samples, n_variants, etc.
+    # Summary data (for preview without files)
+    summary_data = Column(JSON, nullable=True)  # Stores n_samples, n_variants, etc.
 
     # Timestamps
     created_at = Column(DateTime(timezone=True), server_default=func.now())
