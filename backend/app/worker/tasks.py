@@ -399,6 +399,20 @@ def run_full_analysis(self, job_id: int):
         job.progress_percent = 85
         db.commit()
 
+        # Save summary JSON for preview
+        import json
+        summary_data = {
+            "n_samples": len(sample_names),
+            "n_variants": len(variant_ids),
+            "variance_explained": results_data["pca"]["variance_explained"],
+            "n_clusters": n_clusters,
+            "silhouette_score": results_data["clustering"]["silhouette_score"],
+            "dataset_name": dataset.name
+        }
+        summary_path = os.path.join(job_dir, "analysis_summary.json")
+        with open(summary_path, "w") as f:
+            json.dump(summary_data, f)
+
         # Generate report
         report_service = ReportService(job_dir)
         report_files = report_service.generate_full_report(
@@ -427,7 +441,8 @@ def run_full_analysis(self, job_id: int):
             silhouette_score=results_data["clustering"]["silhouette_score"],
             kinship_matrix_path=matrix_path,
             kinship_heatmap_path=heatmap_path,
-            pca_plot_path=pca_plot_path
+            pca_plot_path=pca_plot_path,
+            metadata=summary_data  # Store summary for preview
         )
         db.add(result)
 

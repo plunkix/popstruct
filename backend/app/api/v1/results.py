@@ -48,7 +48,7 @@ async def get_results_preview(
             detail="No results found for this job"
         )
 
-    # Build response with plots and summaries
+    # Build response with metrics from database
     response_data = {
         "job_id": job_id,
         "job_name": job.name,
@@ -59,8 +59,23 @@ async def get_results_preview(
         "metrics": {}
     }
 
-    # Extract plots and summaries from results directory
+    # Get metrics from Result model (stored in database)
     for result in results:
+        # Use metadata if available (preferred for ephemeral storage)
+        if result.metadata:
+            response_data["metrics"] = result.metadata
+
+        # Also extract from result fields
+        if result.pca_variance_explained:
+            response_data["metrics"]["variance_explained"] = result.pca_variance_explained
+
+        if result.n_clusters:
+            response_data["metrics"]["n_clusters"] = result.n_clusters
+
+        if result.silhouette_score:
+            response_data["metrics"]["silhouette_score"] = result.silhouette_score
+
+        # Try to load plots from disk (may not exist on ephemeral storage)
         if result.result_file_path and os.path.exists(result.result_file_path):
             result_dir = os.path.dirname(result.result_file_path)
 
@@ -77,22 +92,8 @@ async def get_results_preview(
                 except Exception as e:
                     print(f"Error reading plot {file_path}: {e}")
 
-            # Look for summary JSON files
-            for file_path in Path(result_dir).glob("*summary*.json"):
-                try:
-                    with open(file_path, "r") as f:
-                        summary_data = json.load(f)
-                        response_data["summaries"].append({
-                            "name": file_path.stem.replace("_", " ").title(),
-                            "data": summary_data
-                        })
-                except Exception as e:
-                    print(f"Error reading summary {file_path}: {e}")
-
-    # Extract key metrics
-    if response_data["summaries"]:
-        # Combine all summaries into metrics
-        for summary in response_data["summaries"]:
-            response_data["metrics"].update(summary.get("data", {}))
+    # If no plots available, show a message
+    if not response_data["plots"] and response_data["metrics"]:
+        response_data["message"] = "Plots are not available (ephemeral storage), but metrics are shown below. Download the full package to get visualizations."
 
     return response_data
