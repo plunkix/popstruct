@@ -15,20 +15,33 @@ def parse_vcf_file(vcf_path: str) -> Tuple[np.ndarray, list, list]:
         variant_ids: list of variant IDs
     """
     try:
-        # Read VCF file using scikit-allel
-        vcf_data = allel.read_vcf(vcf_path)
+        # Read VCF file using scikit-allel with specific fields
+        vcf_data = allel.read_vcf(
+            vcf_path,
+            fields=['samples', 'calldata/GT', 'variants/CHROM', 'variants/POS']
+        )
 
         if vcf_data is None:
-            raise ValueError("Failed to parse VCF file")
+            raise ValueError("Failed to parse VCF file - file may be empty or invalid")
+
+        # Check if GT field exists
+        if 'calldata/GT' not in vcf_data:
+            raise ValueError("VCF file does not contain genotype (GT) data in FORMAT field")
 
         # Extract genotypes
         gt = vcf_data["calldata/GT"]  # Shape: (n_variants, n_samples, ploidy)
 
+        if gt is None or len(gt) == 0:
+            raise ValueError("No genotype data found in VCF file")
+
         # Convert to genotype counts (0, 1, 2 for diploid)
-        # Sum across ploidy dimension
+        # Sum across ploidy dimension (axis=2)
         genotype_matrix = np.sum(gt, axis=2).T  # Shape: (n_samples, n_variants)
 
         # Get sample names
+        if 'samples' not in vcf_data or vcf_data['samples'] is None:
+            raise ValueError("No sample names found in VCF file")
+
         sample_names = vcf_data["samples"].tolist()
 
         # Create variant IDs
