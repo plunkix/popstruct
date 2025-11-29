@@ -121,6 +121,7 @@ export const analysisAPI = {
     api.post('/api/v1/analysis/pca', {
       name,
       dataset_id: datasetId,
+      analysis_type: 'pca',
       parameters,
     }),
 
@@ -128,6 +129,7 @@ export const analysisAPI = {
     api.post('/api/v1/analysis/clustering', {
       name,
       dataset_id: datasetId,
+      analysis_type: 'clustering',
       parameters,
     }),
 
@@ -135,6 +137,7 @@ export const analysisAPI = {
     api.post('/api/v1/analysis/kinship', {
       name,
       dataset_id: datasetId,
+      analysis_type: 'kinship',
       parameters,
     }),
 
@@ -142,6 +145,7 @@ export const analysisAPI = {
     api.post('/api/v1/analysis/full', {
       name,
       dataset_id: datasetId,
+      analysis_type: 'full_analysis',
       parameters,
     }),
 };
