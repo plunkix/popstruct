@@ -156,8 +156,8 @@ export const resultsAPI = {
 
   get: (id: number) => api.get(`/api/v1/results/${id}`),
 
-  download: (id: number) =>
-    api.get(`/api/v1/results/${id}/download`, {
+  download: (jobId: number) =>
+    api.get(`/api/v1/jobs/${jobId}/download`, {
       responseType: 'blob',
     }),
 };

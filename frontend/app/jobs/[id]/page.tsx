@@ -49,20 +49,21 @@ export default function JobDetailsPage() {
     enabled: !!user && !!jobId && job?.status === 'completed',
   });
 
-  const handleDownload = async (resultId: number) => {
+  const handleDownload = async () => {
     try {
-      const response = await resultsAPI.download(resultId);
+      const response = await resultsAPI.download(parseInt(jobId));
       const blob = new Blob([response.data]);
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `result_${resultId}.zip`;
+      a.download = `job_${jobId}_results.zip`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
       console.error('Download failed:', error);
+      alert('Download failed. Results may not be available yet.');
     }
   };
 
@@ -236,38 +237,23 @@ export default function JobDetailsPage() {
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                 Results
               </h2>
-              {resultsLoading ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto"></div>
+              <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    Analysis Results Package
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Includes PCA plots, clustering results, kinship matrix, and summary statistics
+                  </p>
                 </div>
-              ) : results?.results?.length === 0 ? (
-                <p className="text-gray-600 dark:text-gray-400">No results available.</p>
-              ) : (
-                <div className="space-y-3">
-                  {results?.results?.map((result: any) => (
-                    <div
-                      key={result.id}
-                      className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg"
-                    >
-                      <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
-                          {result.result_type}
-                        </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          Generated: {formatDate(result.created_at)}
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => handleDownload(result.id)}
-                        className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                      >
-                        <Download className="h-4 w-4 mr-2" />
-                        Download
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
+                <button
+                  onClick={handleDownload}
+                  className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Download ZIP
+                </button>
+              </div>
             </div>
           )}
         </div>

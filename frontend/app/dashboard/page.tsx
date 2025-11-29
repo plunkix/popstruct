@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { getUser, logout } from '@/lib/auth';
-import { datasetsAPI, jobsAPI } from '@/lib/api';
-import { Database, Activity, FileText, LogOut, Plus } from 'lucide-react';
+import { datasetsAPI, jobsAPI, resultsAPI } from '@/lib/api';
+import { Database, Activity, FileText, LogOut, Plus, Download, CheckCircle } from 'lucide-react';
 import { formatDate, getStatusColor } from '@/lib/utils';
 
 export default function DashboardPage() {
@@ -45,6 +45,24 @@ export default function DashboardPage() {
 
   const handleLogout = () => {
     logout();
+  };
+
+  const handleDownload = async (jobId: number) => {
+    try {
+      const response = await resultsAPI.download(jobId);
+      const blob = new Blob([response.data]);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `job_${jobId}_results.zip`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Download failed:', error);
+      alert('Download failed. Results may not be available yet.');
+    }
   };
 
   if (!user) {
@@ -147,7 +165,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Recent Jobs */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow mb-8">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Recent Jobs</h2>
             <Link
@@ -196,6 +214,55 @@ export default function DashboardPage() {
                   </p>
                 </Link>
               ))}
+            </div>
+          )}
+        </div>
+
+        {/* Completed Results */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">Completed Results</h2>
+          </div>
+
+          {jobsLoading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto"></div>
+            </div>
+          ) : jobsData?.jobs?.filter((j: any) => j.status === 'completed').length === 0 ? (
+            <p className="text-center text-gray-500 py-8">
+              No completed analyses yet.
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {jobsData?.jobs
+                ?.filter((job: any) => job.status === 'completed')
+                .map((job: any) => (
+                  <div
+                    key={job.id}
+                    className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <CheckCircle className="h-5 w-5 text-green-600" />
+                          <h3 className="font-semibold text-gray-900 dark:text-white">
+                            {job.name}
+                          </h3>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {job.analysis_type} • Completed {formatDate(job.completed_at)}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => handleDownload(job.id)}
+                        className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Download
+                      </button>
+                    </div>
+                  </div>
+                ))}
             </div>
           )}
         </div>
