@@ -47,11 +47,12 @@ export default function ResultsViewer({ jobId, onDownload }: ResultsViewerProps)
     );
   }
 
-  if (!results || !results.plots || results.plots.length === 0) {
+  // Check if we have any data at all
+  if (!results || (!results.metrics || Object.keys(results.metrics).length === 0)) {
     return (
       <div className="text-center py-12">
         <BarChart3 className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-        <p className="text-gray-600 dark:text-gray-400">No visualizations available yet.</p>
+        <p className="text-gray-600 dark:text-gray-400">No results available yet.</p>
         {onDownload && (
           <button
             onClick={onDownload}
@@ -110,41 +111,53 @@ export default function ResultsViewer({ jobId, onDownload }: ResultsViewerProps)
         </div>
       )}
 
-      {/* Visualization Tabs */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
-        <div className="border-b border-gray-200 dark:border-gray-700">
-          <div className="flex space-x-4 px-6 overflow-x-auto">
-            {results.plots.map((plot: any, index: number) => (
-              <button
-                key={index}
-                onClick={() => setActiveTab(index)}
-                className={`py-4 px-2 border-b-2 font-medium text-sm whitespace-nowrap ${
-                  activeTab === index
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
-                }`}
-              >
-                {plot.name}
-              </button>
-            ))}
+      {/* Visualization Tabs or Message */}
+      {results.plots && results.plots.length > 0 ? (
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
+          <div className="border-b border-gray-200 dark:border-gray-700">
+            <div className="flex space-x-4 px-6 overflow-x-auto">
+              {results.plots.map((plot: any, index: number) => (
+                <button
+                  key={index}
+                  onClick={() => setActiveTab(index)}
+                  className={`py-4 px-2 border-b-2 font-medium text-sm whitespace-nowrap ${
+                    activeTab === index
+                      ? 'border-blue-600 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                  }`}
+                >
+                  {plot.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="p-6">
+            {results.plots[activeTab] && (
+              <div className="flex flex-col items-center">
+                <img
+                  src={results.plots[activeTab].data}
+                  alt={results.plots[activeTab].name}
+                  className="max-w-full h-auto rounded-lg shadow-lg"
+                />
+                <p className="mt-4 text-sm text-gray-600 dark:text-gray-400 text-center">
+                  {results.plots[activeTab].name}
+                </p>
+              </div>
+            )}
           </div>
         </div>
-
-        <div className="p-6">
-          {results.plots[activeTab] && (
-            <div className="flex flex-col items-center">
-              <img
-                src={results.plots[activeTab].data}
-                alt={results.plots[activeTab].name}
-                className="max-w-full h-auto rounded-lg shadow-lg"
-              />
-              <p className="mt-4 text-sm text-gray-600 dark:text-gray-400 text-center">
-                {results.plots[activeTab].name}
-              </p>
-            </div>
-          )}
+      ) : (
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 text-center">
+          <BarChart3 className="h-12 w-12 text-blue-600 mx-auto mb-3" />
+          <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
+            Plots Not Available
+          </h3>
+          <p className="text-sm text-blue-800 dark:text-blue-300">
+            Due to free tier storage limitations, plot images are not persisted. However, all your analysis metrics are shown above! Download the full results package to get all visualizations.
+          </p>
         </div>
-      </div>
+      )}
 
       {/* Download Button */}
       {onDownload && (
