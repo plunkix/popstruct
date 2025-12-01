@@ -33,7 +33,7 @@ aiofiles==23.2.1
 python-magic==0.4.27
 
 # Payment
-stripe==7.4.0
+razorpay==1.4.1
 
 # Plotting/Visualization
 matplotlib==3.8.2

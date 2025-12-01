@@ -26,8 +26,10 @@ class User(Base):
         default=SubscriptionTier.FREE,
         nullable=False
     )
-    stripe_customer_id = Column(String, nullable=True)
-    stripe_subscription_id = Column(String, nullable=True)
+    jobs_used = Column(Integer, default=0, nullable=False)  # Track free tier usage
+    razorpay_customer_id = Column(String, nullable=True)
+    razorpay_order_id = Column(String, nullable=True)
+    razorpay_payment_id = Column(String, nullable=True)
 
     # Timestamps
     created_at = Column(DateTime(timezone=True), server_default=func.now())

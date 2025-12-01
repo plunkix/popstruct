@@ -48,11 +48,10 @@ class Settings(BaseSettings):
     RESULTS_DIR: str = "./app/static/results"
     ALLOWED_EXTENSIONS: List[str] = [".vcf", ".vcf.gz", ".csv", ".txt"]
 
-    # Stripe
-    STRIPE_SECRET_KEY: str = os.getenv("STRIPE_SECRET_KEY", "")
-    STRIPE_PUBLISHABLE_KEY: str = os.getenv("STRIPE_PUBLISHABLE_KEY", "")
-    STRIPE_WEBHOOK_SECRET: str = os.getenv("STRIPE_WEBHOOK_SECRET", "")
-    STRIPE_BASIC_PRICE_ID: str = os.getenv("STRIPE_BASIC_PRICE_ID", "")
+    # Razorpay (for UPI and other Indian payment methods)
+    RAZORPAY_KEY_ID: str = os.getenv("RAZORPAY_KEY_ID", "")
+    RAZORPAY_KEY_SECRET: str = os.getenv("RAZORPAY_KEY_SECRET", "")
+    PREMIUM_PRICE_INR: int = 999  # ₹999 for premium tier
 
     # Usage Limits
     FREE_MAX_FILE_SIZE_MB: int = 50

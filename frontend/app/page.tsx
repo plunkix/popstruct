@@ -375,21 +375,21 @@ export default function Home() {
               </p>
               <div className="flex items-center space-x-4">
                 <Link
-                  href="https://github.com/yourusername"
+                  href="https://github.com/plunkix"
                   target="_blank"
                   className="bg-gray-800 hover:bg-gray-700 p-3 rounded-full transition-colors"
                 >
                   <Github className="h-5 w-5" />
                 </Link>
                 <Link
-                  href="https://linkedin.com/in/yourusername"
+                  href="https://in.linkedin.com/in/plunkix30002"
                   target="_blank"
                   className="bg-gray-800 hover:bg-gray-700 p-3 rounded-full transition-colors"
                 >
                   <Linkedin className="h-5 w-5" />
                 </Link>
                 <Link
-                  href="mailto:your.email@example.com"
+                  href="mailto:tathesrushti@gmail.com"
                   className="bg-gray-800 hover:bg-gray-700 p-3 rounded-full transition-colors"
                 >
                   <Mail className="h-5 w-5" />
@@ -405,7 +405,7 @@ export default function Home() {
                 Have questions or want to collaborate? Feel free to reach out!
               </p>
               <Link
-                href="https://yourportfolio.com"
+                href="https://ifelsecry.xyz"
                 target="_blank"
                 className="inline-flex items-center bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-3 rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-200 font-semibold"
               >
