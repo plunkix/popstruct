@@ -16,6 +16,8 @@ export default function JobsPage() {
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const [deleteJobId, setDeleteJobId] = useState<number | null>(null);
+  const [selectedJobs, setSelectedJobs] = useState<number[]>([]);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -51,6 +53,21 @@ export default function JobsPage() {
     },
   });
 
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (jobIds: number[]) => {
+      await Promise.all(jobIds.map(id => jobsAPI.delete(id)));
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['jobs'] });
+      setSelectedJobs([]);
+      setShowDeleteConfirm(false);
+    },
+    onError: (error: any) => {
+      alert(error.response?.data?.detail || 'Failed to delete jobs');
+      setShowDeleteConfirm(false);
+    },
+  });
+
   const handleDeleteClick = (e: React.MouseEvent, jobId: number) => {
     e.preventDefault();
     e.stopPropagation();
@@ -65,6 +82,32 @@ export default function JobsPage() {
 
   const cancelDelete = () => {
     setDeleteJobId(null);
+  };
+
+  const toggleJobSelection = (jobId: number) => {
+    setSelectedJobs(prev =>
+      prev.includes(jobId)
+        ? prev.filter(id => id !== jobId)
+        : [...prev, jobId]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedJobs.length === data?.jobs?.length) {
+      setSelectedJobs([]);
+    } else {
+      setSelectedJobs(data?.jobs?.map((j: any) => j.id) || []);
+    }
+  };
+
+  const handleDeleteSelected = () => {
+    if (selectedJobs.length > 0) {
+      setShowDeleteConfirm(true);
+    }
+  };
+
+  const confirmBulkDelete = () => {
+    bulkDeleteMutation.mutate(selectedJobs);
   };
 
   if (!user) {
@@ -121,6 +164,35 @@ export default function JobsPage() {
           </div>
         ) : (
           <>
+            {data?.jobs?.length > 0 && (
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={selectedJobs.length === data?.jobs?.length}
+                      onChange={toggleSelectAll}
+                      className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Select All</span>
+                  </label>
+                  {selectedJobs.length > 0 && (
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      {selectedJobs.length} selected
+                    </span>
+                  )}
+                </div>
+                {selectedJobs.length > 0 && (
+                  <button
+                    onClick={handleDeleteSelected}
+                    className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete Selected
+                  </button>
+                )}
+              </div>
+            )}
             <div className="grid gap-4 mb-6">
               {data?.jobs?.map((job: any) => (
                 <div key={job.id} className="relative">
@@ -129,21 +201,33 @@ export default function JobsPage() {
                     className="block bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
                   >
                     <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-3 mb-2">
-                          <FileText className="h-6 w-6 text-blue-600" />
-                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                            {job.name}
-                          </h3>
-                        </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                          Analysis Type: <span className="font-medium">{job.analysis_type}</span>
-                        </p>
-                        {job.dataset_name && (
-                          <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Dataset: {job.dataset_name}
+                      <div className="flex items-start space-x-3 flex-1">
+                        <input
+                          type="checkbox"
+                          checked={selectedJobs.includes(job.id)}
+                          onChange={(e) => {
+                            e.preventDefault();
+                            toggleJobSelection(job.id);
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                          className="mt-1 w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-3 mb-2">
+                            <FileText className="h-6 w-6 text-blue-600" />
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                              {job.name}
+                            </h3>
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                            Analysis Type: <span className="font-medium">{job.analysis_type}</span>
                           </p>
-                        )}
+                          {job.dataset_name && (
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              Dataset: {job.dataset_name}
+                            </p>
+                          )}
+                        </div>
                       </div>
                       <div className="flex items-center space-x-2">
                         <span
@@ -210,7 +294,7 @@ export default function JobsPage() {
           </>
         )}
 
-        {/* Delete Confirmation Modal */}
+        {/* Delete Single Job Confirmation Modal */}
         {deleteJobId && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
@@ -234,6 +318,37 @@ export default function JobsPage() {
                   disabled={deleteMutation.isPending}
                 >
                   {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Bulk Delete Confirmation Modal */}
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                Delete {selectedJobs.length} Job{selectedJobs.length > 1 ? 's' : ''}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                Are you sure you want to delete {selectedJobs.length === 1 ? 'this job' : `these ${selectedJobs.length} jobs`}?
+                This action cannot be undone.
+              </p>
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+                  disabled={bulkDeleteMutation.isPending}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmBulkDelete}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+                  disabled={bulkDeleteMutation.isPending}
+                >
+                  {bulkDeleteMutation.isPending ? 'Deleting...' : 'Delete'}
                 </button>
               </div>
             </div>
