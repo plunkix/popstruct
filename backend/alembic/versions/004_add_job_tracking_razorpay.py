@@ -20,17 +20,24 @@ def upgrade() -> None:
     # Add jobs_used column for tracking free tier usage
     op.add_column('users', sa.Column('jobs_used', sa.Integer(), nullable=False, server_default='0'))
 
-    # Remove Stripe columns, add Razorpay columns
+    # Add Razorpay columns
     op.add_column('users', sa.Column('razorpay_customer_id', sa.String(), nullable=True))
     op.add_column('users', sa.Column('razorpay_order_id', sa.String(), nullable=True))
     op.add_column('users', sa.Column('razorpay_payment_id', sa.String(), nullable=True))
 
-    # Drop old Stripe columns if they exist
-    try:
+    # Try to drop old Stripe columns if they exist (use raw SQL to avoid errors)
+    from sqlalchemy import text
+    conn = op.get_bind()
+
+    # Check and drop stripe_customer_id
+    result = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='users' AND column_name='stripe_customer_id'"))
+    if result.fetchone():
         op.drop_column('users', 'stripe_customer_id')
+
+    # Check and drop stripe_subscription_id
+    result = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='users' AND column_name='stripe_subscription_id'"))
+    if result.fetchone():
         op.drop_column('users', 'stripe_subscription_id')
-    except:
-        pass  # Columns might not exist
 
 
 def downgrade() -> None:
