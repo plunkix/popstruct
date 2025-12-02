@@ -17,27 +17,43 @@ depends_on = None
 
 
 def upgrade() -> None:
-    # Add jobs_used column for tracking free tier usage
-    op.add_column('users', sa.Column('jobs_used', sa.Integer(), nullable=False, server_default='0'))
-
-    # Add Razorpay columns
-    op.add_column('users', sa.Column('razorpay_customer_id', sa.String(), nullable=True))
-    op.add_column('users', sa.Column('razorpay_order_id', sa.String(), nullable=True))
-    op.add_column('users', sa.Column('razorpay_payment_id', sa.String(), nullable=True))
-
-    # Try to drop old Stripe columns if they exist (use raw SQL to avoid errors)
     from sqlalchemy import text
     conn = op.get_bind()
 
-    # Check and drop stripe_customer_id
+    # Check and add jobs_used column if it doesn't exist
+    result = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='users' AND column_name='jobs_used'"))
+    if not result.fetchone():
+        op.add_column('users', sa.Column('jobs_used', sa.Integer(), nullable=False, server_default='0'))
+        print("✓ Added jobs_used column")
+    else:
+        print("✓ jobs_used column already exists, skipping")
+
+    # Check and add Razorpay columns if they don't exist
+    result = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='users' AND column_name='razorpay_customer_id'"))
+    if not result.fetchone():
+        op.add_column('users', sa.Column('razorpay_customer_id', sa.String(), nullable=True))
+        print("✓ Added razorpay_customer_id column")
+
+    result = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='users' AND column_name='razorpay_order_id'"))
+    if not result.fetchone():
+        op.add_column('users', sa.Column('razorpay_order_id', sa.String(), nullable=True))
+        print("✓ Added razorpay_order_id column")
+
+    result = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='users' AND column_name='razorpay_payment_id'"))
+    if not result.fetchone():
+        op.add_column('users', sa.Column('razorpay_payment_id', sa.String(), nullable=True))
+        print("✓ Added razorpay_payment_id column")
+
+    # Try to drop old Stripe columns if they exist
     result = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='users' AND column_name='stripe_customer_id'"))
     if result.fetchone():
         op.drop_column('users', 'stripe_customer_id')
+        print("✓ Dropped stripe_customer_id column")
 
-    # Check and drop stripe_subscription_id
     result = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='users' AND column_name='stripe_subscription_id'"))
     if result.fetchone():
         op.drop_column('users', 'stripe_subscription_id')
+        print("✓ Dropped stripe_subscription_id column")
 
 
 def downgrade() -> None:
