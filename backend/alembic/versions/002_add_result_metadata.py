@@ -17,8 +17,17 @@ depends_on = None
 
 
 def upgrade():
-    # Add summary_data column to results table
-    op.add_column('results', sa.Column('summary_data', sa.JSON(), nullable=True))
+    from sqlalchemy import text
+    conn = op.get_bind()
+
+    # Check if summary_data column already exists
+    result = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='results' AND column_name='summary_data'"))
+    if not result.fetchone():
+        # Add summary_data column to results table
+        op.add_column('results', sa.Column('summary_data', sa.JSON(), nullable=True))
+        print("✓ Added summary_data column")
+    else:
+        print("✓ summary_data column already exists, skipping")
 
 
 def downgrade():

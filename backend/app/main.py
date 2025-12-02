@@ -101,23 +101,6 @@ async def startup_event():
     init_db()
     print("Database initialized")
 
-    # Auto-add summary_data column if it doesn't exist (for free tier without shell)
-    try:
-        from app.core.database import engine
-        from sqlalchemy import text
-        with engine.connect() as conn:
-            # Check if column exists
-            result = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='results' AND column_name='summary_data'"))
-            if result.fetchone() is None:
-                print("Adding summary_data column to results table...")
-                conn.execute(text("ALTER TABLE results ADD COLUMN summary_data JSON"))
-                conn.commit()
-                print("✓ summary_data column added successfully!")
-            else:
-                print("✓ summary_data column already exists")
-    except Exception as e:
-        print(f"Note: Could not auto-add summary_data column: {e}")
-
 
 @app.get("/")
 async def root():
