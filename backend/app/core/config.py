@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     # CORS
     ALLOWED_ORIGINS: Union[str, List[str]] = os.getenv(
         "ALLOWED_ORIGINS",
-        "http://localhost:3000,http://localhost:3001,https://popstruct-i3ab.vercel.app"
+        "http://localhost:3000,http://localhost:3001,https://popstruct-i3ab.vercel.app,https://popstruct.vercel.app"
     )
 
     @field_validator('ALLOWED_ORIGINS', mode='before')
