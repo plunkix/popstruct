@@ -17,6 +17,21 @@ depends_on = None
 
 
 def upgrade() -> None:
+    from sqlalchemy import text
+    conn = op.get_bind()
+
+    # Create enum types if they don't exist
+    conn.execute(text("CREATE TYPE IF NOT EXISTS subscriptiontier AS ENUM ('free', 'premium')"))
+    conn.execute(text("CREATE TYPE IF NOT EXISTS filetype AS ENUM ('vcf', 'csv', 'txt')"))
+    conn.execute(text("CREATE TYPE IF NOT EXISTS analysistype AS ENUM ('pca', 'clustering', 'kinship', 'full_analysis')"))
+    conn.execute(text("CREATE TYPE IF NOT EXISTS jobstatus AS ENUM ('pending', 'running', 'completed', 'failed')"))
+
+    # Check if users table exists
+    result = conn.execute(text("SELECT to_regclass('public.users')"))
+    if result.scalar() is not None:
+        print("✓ Tables already exist, skipping creation")
+        return
+
     # Create users table
     op.create_table(
         'users',
@@ -26,7 +41,7 @@ def upgrade() -> None:
         sa.Column('full_name', sa.String(), nullable=True),
         sa.Column('is_active', sa.Boolean(), default=True),
         sa.Column('is_admin', sa.Boolean(), default=False),
-        sa.Column('subscription_tier', sa.Enum('free', 'premium', name='subscriptiontier'), nullable=False),
+        sa.Column('subscription_tier', postgresql.ENUM('free', 'premium', name='subscriptiontier', create_type=False), nullable=False),
         sa.Column('stripe_customer_id', sa.String(), nullable=True),
         sa.Column('stripe_subscription_id', sa.String(), nullable=True),
         sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
@@ -42,7 +57,7 @@ def upgrade() -> None:
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('name', sa.String(), nullable=False),
         sa.Column('description', sa.Text(), nullable=True),
-        sa.Column('file_type', sa.Enum('vcf', 'csv', 'txt', name='filetype'), nullable=False),
+        sa.Column('file_type', postgresql.ENUM('vcf', 'csv', 'txt', name='filetype', create_type=False), nullable=False),
         sa.Column('file_path', sa.String(), nullable=False),
         sa.Column('file_size_mb', sa.Float(), nullable=False),
         sa.Column('n_samples', sa.Integer(), nullable=True),
@@ -60,8 +75,8 @@ def upgrade() -> None:
         'jobs',
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('name', sa.String(), nullable=False),
-        sa.Column('analysis_type', sa.Enum('pca', 'clustering', 'kinship', 'full_analysis', name='analysistype'), nullable=False),
-        sa.Column('status', sa.Enum('pending', 'running', 'completed', 'failed', name='jobstatus'), nullable=False),
+        sa.Column('analysis_type', postgresql.ENUM('pca', 'clustering', 'kinship', 'full_analysis', name='analysistype', create_type=False), nullable=False),
+        sa.Column('status', postgresql.ENUM('pending', 'running', 'completed', 'failed', name='jobstatus', create_type=False), nullable=False),
         sa.Column('parameters', sa.JSON(), nullable=True),
         sa.Column('progress_percent', sa.Integer(), default=0),
         sa.Column('error_message', sa.Text(), nullable=True),
