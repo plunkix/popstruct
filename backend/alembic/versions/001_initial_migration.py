@@ -20,11 +20,40 @@ def upgrade() -> None:
     from sqlalchemy import text
     conn = op.get_bind()
 
-    # Create enum types if they don't exist
-    conn.execute(text("CREATE TYPE IF NOT EXISTS subscriptiontier AS ENUM ('free', 'premium')"))
-    conn.execute(text("CREATE TYPE IF NOT EXISTS filetype AS ENUM ('vcf', 'csv', 'txt')"))
-    conn.execute(text("CREATE TYPE IF NOT EXISTS analysistype AS ENUM ('pca', 'clustering', 'kinship', 'full_analysis')"))
-    conn.execute(text("CREATE TYPE IF NOT EXISTS jobstatus AS ENUM ('pending', 'running', 'completed', 'failed')"))
+    # Create enum types only if they don't exist (PostgreSQL compatible way)
+    conn.execute(text("""
+        DO $$ BEGIN
+            CREATE TYPE subscriptiontier AS ENUM ('free', 'premium');
+        EXCEPTION
+            WHEN duplicate_object THEN null;
+        END $$;
+    """))
+
+    conn.execute(text("""
+        DO $$ BEGIN
+            CREATE TYPE filetype AS ENUM ('vcf', 'csv', 'txt');
+        EXCEPTION
+            WHEN duplicate_object THEN null;
+        END $$;
+    """))
+
+    conn.execute(text("""
+        DO $$ BEGIN
+            CREATE TYPE analysistype AS ENUM ('pca', 'clustering', 'kinship', 'full_analysis');
+        EXCEPTION
+            WHEN duplicate_object THEN null;
+        END $$;
+    """))
+
+    conn.execute(text("""
+        DO $$ BEGIN
+            CREATE TYPE jobstatus AS ENUM ('pending', 'running', 'completed', 'failed');
+        EXCEPTION
+            WHEN duplicate_object THEN null;
+        END $$;
+    """))
+
+    print("✓ Enum types created or already exist")
 
     # Check if users table exists
     result = conn.execute(text("SELECT to_regclass('public.users')"))
