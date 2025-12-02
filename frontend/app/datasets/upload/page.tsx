@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getUser } from '@/lib/auth';
 import { datasetsAPI } from '@/lib/api';
-import { ArrowLeft, Upload, FileText } from 'lucide-react';
+import { ArrowLeft, Upload, FileText, Dna } from 'lucide-react';
 
 export default function UploadDatasetPage() {
   const router = useRouter();
@@ -75,24 +75,25 @@ export default function UploadDatasetPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-emerald-50/30 to-teal-50/30 dark:bg-gray-900">
+        <div className="animate-spin h-8 w-8 border-4 border-emerald-600 border-t-transparent rounded-full"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <header className="bg-white dark:bg-gray-800 shadow">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-emerald-50/30 to-teal-50/30 dark:bg-gray-900">
+      <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow border-b border-gray-200 dark:border-gray-700">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center space-x-4">
             <Link
               href="/datasets"
-              className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+              className="text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
             >
               <ArrowLeft className="h-6 w-6" />
             </Link>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <Dna className="h-6 w-6 text-emerald-600" />
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
               Upload Dataset
             </h1>
           </div>
@@ -100,7 +101,7 @@ export default function UploadDatasetPage() {
       </header>
 
       <main className="container mx-auto px-4 py-8 max-w-2xl">
-        <div className="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-8">
+        <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
           <div className="mb-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
               Upload Genomic Data
@@ -110,17 +111,17 @@ export default function UploadDatasetPage() {
             </p>
           </div>
 
-          <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-            <h3 className="font-semibold text-blue-900 dark:text-blue-300 mb-2">
+          <div className="mb-6 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
+            <h3 className="font-semibold text-emerald-900 dark:text-emerald-300 mb-2">
               Accepted File Formats
             </h3>
-            <div className="space-y-2 text-sm text-blue-800 dark:text-blue-400">
+            <div className="space-y-2 text-sm text-emerald-800 dark:text-emerald-400">
               <div>
                 <strong>VCF Format:</strong> Standard Variant Call Format files with genotype data (GT field)
                 <a
                   href="/samples/sample.vcf"
                   download
-                  className="ml-2 text-blue-600 dark:text-blue-400 underline hover:text-blue-700"
+                  className="ml-2 text-emerald-600 dark:text-emerald-400 underline hover:text-teal-600"
                 >
                   Download sample VCF
                 </a>
@@ -130,7 +131,7 @@ export default function UploadDatasetPage() {
                 <a
                   href="/samples/sample.csv"
                   download
-                  className="ml-2 text-blue-600 dark:text-blue-400 underline hover:text-blue-700"
+                  className="ml-2 text-emerald-600 dark:text-emerald-400 underline hover:text-teal-600"
                 >
                   Download sample CSV
                 </a>
@@ -161,7 +162,7 @@ export default function UploadDatasetPage() {
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white transition-all"
                 placeholder="My Population Dataset"
               />
             </div>
@@ -175,7 +176,7 @@ export default function UploadDatasetPage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white transition-all"
                 placeholder="Describe your dataset..."
               />
             </div>
@@ -184,11 +185,11 @@ export default function UploadDatasetPage() {
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Data File
               </label>
-              <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg hover:border-blue-500 transition-colors">
+              <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg hover:border-emerald-500 transition-colors">
                 <div className="space-y-1 text-center">
                   {file ? (
                     <>
-                      <FileText className="mx-auto h-12 w-12 text-blue-600" />
+                      <FileText className="mx-auto h-12 w-12 text-emerald-600" />
                       <div className="text-sm text-gray-600 dark:text-gray-400">
                         <p className="font-semibold">{file.name}</p>
                         <p>{(file.size / 1024 / 1024).toFixed(2)} MB</p>
@@ -207,7 +208,7 @@ export default function UploadDatasetPage() {
                       <div className="flex text-sm text-gray-600 dark:text-gray-400">
                         <label
                           htmlFor="file-upload"
-                          className="relative cursor-pointer rounded-md font-medium text-blue-600 hover:text-blue-500"
+                          className="relative cursor-pointer rounded-md font-medium text-emerald-600 hover:text-teal-600 transition-colors"
                         >
                           <span>Upload a file</span>
                           <input
@@ -233,7 +234,7 @@ export default function UploadDatasetPage() {
             <button
               type="submit"
               disabled={uploading || !file}
-              className="w-full flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {uploading ? (
                 <>

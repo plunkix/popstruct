@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { getUser, logout } from '@/lib/auth';
 import { datasetsAPI, jobsAPI, resultsAPI } from '@/lib/api';
-import { Database, Activity, FileText, LogOut, Plus, Download, CheckCircle } from 'lucide-react';
+import { Database, Activity, FileText, LogOut, Plus, Download, CheckCircle, Dna } from 'lucide-react';
 import { formatDate, getStatusColor } from '@/lib/utils';
 
 export default function DashboardPage() {
@@ -66,24 +66,27 @@ export default function DashboardPage() {
   };
 
   if (!user) {
-    return <div className="min-h-screen flex items-center justify-center">
-      <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full"></div>
+    return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-emerald-50/30 to-teal-50/30 dark:bg-gray-900">
+      <div className="animate-spin h-8 w-8 border-4 border-emerald-600 border-t-transparent rounded-full"></div>
     </div>;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-emerald-50/30 to-teal-50/30 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow">
+      <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow border-b border-gray-200 dark:border-gray-700">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            PopStruct
-          </h1>
+          <div className="flex items-center space-x-2">
+            <Dna className="h-8 w-8 text-emerald-600" />
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+              PopStruct
+            </h1>
+          </div>
           <div className="flex items-center space-x-4">
             <span className="text-sm text-gray-600 dark:text-gray-300">
               {user.email}
             </span>
-            <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-semibold rounded-full">
+            <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-200 text-xs font-semibold rounded-full">
               {user.subscription_tier}
             </span>
             <button
@@ -100,7 +103,7 @@ export default function DashboardPage() {
       <main className="container mx-auto px-4 py-8">
         {/* Stats */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -110,11 +113,11 @@ export default function DashboardPage() {
                   {datasetsData?.total || 0}
                 </p>
               </div>
-              <Database className="h-12 w-12 text-blue-600" />
+              <Database className="h-12 w-12 text-emerald-600" />
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -124,11 +127,11 @@ export default function DashboardPage() {
                   {jobsData?.total || 0}
                 </p>
               </div>
-              <Activity className="h-12 w-12 text-green-600" />
+              <Activity className="h-12 w-12 text-teal-600" />
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -138,39 +141,39 @@ export default function DashboardPage() {
                   {user.subscription_tier}
                 </p>
               </div>
-              <FileText className="h-12 w-12 text-purple-600" />
+              <FileText className="h-12 w-12 text-blue-600" />
             </div>
           </div>
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow mb-8">
-          <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 mb-8">
+          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Quick Actions</h2>
           <div className="grid md:grid-cols-2 gap-4">
             <Link
               href="/datasets/upload"
-              className="flex items-center justify-center p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+              className="flex items-center justify-center p-4 border-2 border-dashed border-emerald-300 dark:border-emerald-600 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all"
             >
-              <Plus className="h-5 w-5 mr-2" />
-              Upload New Dataset
+              <Plus className="h-5 w-5 mr-2 text-emerald-600" />
+              <span className="text-gray-900 dark:text-white">Upload New Dataset</span>
             </Link>
             <Link
               href="/datasets"
-              className="flex items-center justify-center p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/20"
+              className="flex items-center justify-center p-4 border-2 border-dashed border-teal-300 dark:border-teal-600 rounded-lg hover:border-teal-500 hover:bg-teal-50 dark:hover:bg-teal-900/20 transition-all"
             >
-              <Database className="h-5 w-5 mr-2" />
-              View All Datasets
+              <Database className="h-5 w-5 mr-2 text-teal-600" />
+              <span className="text-gray-900 dark:text-white">View All Datasets</span>
             </Link>
           </div>
         </div>
 
         {/* Recent Jobs */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow mb-8">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 mb-8">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">Recent Jobs</h2>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Recent Jobs</h2>
             <Link
               href="/jobs"
-              className="text-blue-600 hover:text-blue-700 text-sm font-semibold"
+              className="text-emerald-600 hover:text-teal-600 text-sm font-semibold transition-colors"
             >
               View all
             </Link>
@@ -178,7 +181,7 @@ export default function DashboardPage() {
 
           {jobsLoading ? (
             <div className="text-center py-8">
-              <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto"></div>
+              <div className="animate-spin h-8 w-8 border-4 border-emerald-600 border-t-transparent rounded-full mx-auto"></div>
             </div>
           ) : jobsData?.jobs?.length === 0 ? (
             <p className="text-center text-gray-500 py-8">
@@ -219,12 +222,12 @@ export default function DashboardPage() {
         </div>
 
         {/* Completed Results */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">Completed Results</h2>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Completed Results</h2>
             <Link
               href="/jobs"
-              className="text-blue-600 hover:text-blue-700 text-sm font-semibold"
+              className="text-emerald-600 hover:text-teal-600 text-sm font-semibold transition-colors"
             >
               View all jobs
             </Link>
@@ -232,7 +235,7 @@ export default function DashboardPage() {
 
           {jobsLoading ? (
             <div className="text-center py-8">
-              <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto"></div>
+              <div className="animate-spin h-8 w-8 border-4 border-emerald-600 border-t-transparent rounded-full mx-auto"></div>
             </div>
           ) : jobsData?.jobs?.filter((j: any) => j.status === 'completed').length === 0 ? (
             <p className="text-center text-gray-500 py-8">
@@ -259,7 +262,7 @@ export default function DashboardPage() {
                       </div>
                       <Link
                         href={`/jobs/${job.id}`}
-                        className="text-blue-600 hover:text-blue-700 text-sm font-semibold"
+                        className="text-emerald-600 hover:text-teal-600 text-sm font-semibold transition-colors"
                       >
                         View Full Details →
                       </Link>
@@ -271,7 +274,7 @@ export default function DashboardPage() {
                       </p>
                       <button
                         onClick={() => handleDownload(job.id)}
-                        className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-200 font-semibold"
                       >
                         <Download className="h-5 w-5 mr-2" />
                         Download Results

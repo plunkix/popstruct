@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { signup } from '@/lib/auth';
-import { Mail, Lock, User, Loader2 } from 'lucide-react';
+import { Mail, Lock, User, Loader2, Dna } from 'lucide-react';
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
@@ -36,18 +36,21 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-teal-50 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 px-4">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            PopStruct
-          </h1>
+          <div className="flex items-center justify-center space-x-2 mb-4">
+            <Dna className="h-10 w-10 text-emerald-600" />
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+              PopStruct
+            </h1>
+          </div>
           <h2 className="text-2xl font-semibold text-gray-700 dark:text-gray-300">
             Create your account
           </h2>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-8">
+        <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-400 text-red-700 dark:text-red-400 px-4 py-3 rounded">
@@ -66,7 +69,7 @@ export default function SignupPage() {
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="pl-10 w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                  className="pl-10 w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white transition-all"
                   placeholder="John Doe"
                 />
               </div>
@@ -84,7 +87,7 @@ export default function SignupPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                  className="pl-10 w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white transition-all"
                   placeholder="you@example.com"
                 />
               </div>
@@ -102,7 +105,7 @@ export default function SignupPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                  className="pl-10 w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white transition-all"
                   placeholder="••••••••"
                   minLength={6}
                 />
@@ -115,7 +118,7 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
@@ -131,7 +134,7 @@ export default function SignupPage() {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Already have an account?{' '}
-              <Link href="/login" className="text-blue-600 hover:text-blue-700 font-semibold">
+              <Link href="/login" className="text-emerald-600 hover:text-teal-600 font-semibold transition-colors">
                 Sign in
               </Link>
             </p>

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { getUser } from '@/lib/auth';
 import { jobsAPI, resultsAPI } from '@/lib/api';
-import { ArrowLeft, Download, FileText, Calendar, Activity } from 'lucide-react';
+import { ArrowLeft, Download, FileText, Calendar, Activity, Dna } from 'lucide-react';
 import { formatDate, getStatusColor } from '@/lib/utils';
 import ResultsViewer from '@/components/ResultsViewer';
 
@@ -70,25 +70,26 @@ export default function JobDetailsPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-emerald-50/30 to-teal-50/30 dark:bg-gray-900">
+        <div className="animate-spin h-8 w-8 border-4 border-emerald-600 border-t-transparent rounded-full"></div>
       </div>
     );
   }
 
   if (jobLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <header className="bg-white dark:bg-gray-800 shadow">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-emerald-50/30 to-teal-50/30 dark:bg-gray-900">
+        <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow border-b border-gray-200 dark:border-gray-700">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center space-x-4">
               <Link
                 href="/jobs"
-                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                className="text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
               >
                 <ArrowLeft className="h-6 w-6" />
               </Link>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <Dna className="h-6 w-6 text-emerald-600" />
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
                 Job Details
               </h1>
             </div>
@@ -96,7 +97,7 @@ export default function JobDetailsPage() {
         </header>
         <main className="container mx-auto px-4 py-8">
           <div className="text-center py-12">
-            <div className="animate-spin h-12 w-12 border-4 border-blue-600 border-t-transparent rounded-full mx-auto"></div>
+            <div className="animate-spin h-12 w-12 border-4 border-emerald-600 border-t-transparent rounded-full mx-auto"></div>
             <p className="mt-4 text-gray-600 dark:text-gray-400">Loading job details...</p>
           </div>
         </main>
@@ -106,17 +107,18 @@ export default function JobDetailsPage() {
 
   if (jobError || !job) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <header className="bg-white dark:bg-gray-800 shadow">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-emerald-50/30 to-teal-50/30 dark:bg-gray-900">
+        <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow border-b border-gray-200 dark:border-gray-700">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center space-x-4">
               <Link
                 href="/jobs"
-                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                className="text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
               >
                 <ArrowLeft className="h-6 w-6" />
               </Link>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <Dna className="h-6 w-6 text-emerald-600" />
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
                 Job Details
               </h1>
             </div>
@@ -132,17 +134,18 @@ export default function JobDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <header className="bg-white dark:bg-gray-800 shadow">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-emerald-50/30 to-teal-50/30 dark:bg-gray-900">
+      <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow border-b border-gray-200 dark:border-gray-700">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center space-x-4">
             <Link
               href="/jobs"
-              className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+              className="text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
             >
               <ArrowLeft className="h-6 w-6" />
             </Link>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <Dna className="h-6 w-6 text-emerald-600" />
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
               {job.name}
             </h1>
           </div>
@@ -152,7 +155,7 @@ export default function JobDetailsPage() {
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="space-y-6">
           {/* Job Status Card */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
             <div className="flex items-start justify-between mb-4">
               <div>
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
@@ -200,10 +203,10 @@ export default function JobDetailsPage() {
             )}
 
             {(job.status === 'pending' || job.status === 'running') && (
-              <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded">
+              <div className="mt-4 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded">
                 <div className="flex items-center space-x-3">
-                  <Activity className="h-5 w-5 text-blue-600 animate-pulse" />
-                  <p className="text-sm text-blue-700 dark:text-blue-400">
+                  <Activity className="h-5 w-5 text-emerald-600 animate-pulse" />
+                  <p className="text-sm text-emerald-700 dark:text-emerald-400">
                     Analysis is {job.status}. This page will refresh automatically.
                   </p>
                 </div>
@@ -213,7 +216,7 @@ export default function JobDetailsPage() {
 
           {/* Parameters Card */}
           {job.parameters && Object.keys(job.parameters).length > 0 && (
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                 Analysis Parameters
               </h2>
@@ -234,7 +237,7 @@ export default function JobDetailsPage() {
 
           {/* Results Card */}
           {job.status === 'completed' && (
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
                 Analysis Results
               </h2>

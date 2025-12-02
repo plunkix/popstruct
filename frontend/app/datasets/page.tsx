@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getUser } from '@/lib/auth';
 import { datasetsAPI, analysisAPI } from '@/lib/api';
-import { Database, Plus, FileText, Calendar, ArrowLeft, Play, Trash2 } from 'lucide-react';
+import { Database, Plus, FileText, Calendar, ArrowLeft, Play, Trash2, Dna } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 
 export default function DatasetsPage() {
@@ -99,31 +99,32 @@ export default function DatasetsPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-emerald-50/30 to-teal-50/30 dark:bg-gray-900">
+        <div className="animate-spin h-8 w-8 border-4 border-emerald-600 border-t-transparent rounded-full"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <header className="bg-white dark:bg-gray-800 shadow">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-emerald-50/30 to-teal-50/30 dark:bg-gray-900">
+      <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow border-b border-gray-200 dark:border-gray-700">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Link
                 href="/dashboard"
-                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                className="text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
               >
                 <ArrowLeft className="h-6 w-6" />
               </Link>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <Dna className="h-6 w-6 text-emerald-600" />
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
                 My Datasets
               </h1>
             </div>
             <Link
               href="/datasets/upload"
-              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="flex items-center px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-200 font-semibold"
             >
               <Plus className="h-5 w-5 mr-2" />
               Upload Dataset
@@ -135,7 +136,7 @@ export default function DatasetsPage() {
       <main className="container mx-auto px-4 py-8">
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="animate-spin h-12 w-12 border-4 border-blue-600 border-t-transparent rounded-full mx-auto"></div>
+            <div className="animate-spin h-12 w-12 border-4 border-emerald-600 border-t-transparent rounded-full mx-auto"></div>
             <p className="mt-4 text-gray-600 dark:text-gray-400">Loading datasets...</p>
           </div>
         ) : error ? (
@@ -153,7 +154,7 @@ export default function DatasetsPage() {
             </p>
             <Link
               href="/datasets/upload"
-              className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-200 font-semibold"
             >
               <Plus className="h-5 w-5 mr-2" />
               Upload Dataset
@@ -169,7 +170,7 @@ export default function DatasetsPage() {
                       type="checkbox"
                       checked={selectedDatasets.length === data?.datasets?.length}
                       onChange={toggleSelectAll}
-                      className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                      className="w-4 h-4 text-emerald-600 rounded focus:ring-2 focus:ring-emerald-500"
                     />
                     <span className="text-sm text-gray-700 dark:text-gray-300">Select All</span>
                   </label>
@@ -194,7 +195,7 @@ export default function DatasetsPage() {
               {data?.datasets?.map((dataset: any) => (
                 <div
                   key={dataset.id}
-                  className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+                  className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-start space-x-3 flex-1">
@@ -202,11 +203,11 @@ export default function DatasetsPage() {
                         type="checkbox"
                         checked={selectedDatasets.includes(dataset.id)}
                         onChange={() => toggleDatasetSelection(dataset.id)}
-                        className="mt-1 w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                        className="mt-1 w-5 h-5 text-emerald-600 rounded focus:ring-2 focus:ring-emerald-500 cursor-pointer"
                       />
                       <div className="flex-1">
                         <div className="flex items-center space-x-3 mb-2">
-                          <FileText className="h-6 w-6 text-blue-600" />
+                          <FileText className="h-6 w-6 text-emerald-600" />
                           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                             {dataset.name}
                           </h3>
@@ -234,7 +235,7 @@ export default function DatasetsPage() {
                     <button
                       onClick={() => handleRunAnalysis(dataset.id, dataset.name)}
                       disabled={processing === dataset.id}
-                      className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center px-4 py-2 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {processing === dataset.id ? (
                         <>
