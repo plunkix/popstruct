@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { login } from '@/lib/auth';
-import { Mail, Lock, Loader2, Dna } from 'lucide-react';
+import { Mail, Lock, Loader2, Dna, ArrowLeft } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -31,6 +31,14 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-teal-50 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 px-4">
       <div className="max-w-md w-full space-y-8">
+        <Link
+          href="/"
+          className="inline-flex items-center text-emerald-600 hover:text-teal-600 transition-colors font-medium mb-4"
+        >
+          <ArrowLeft className="h-5 w-5 mr-2" />
+          Back to Home
+        </Link>
+
         <div className="text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <Dna className="h-10 w-10 text-emerald-600" />
